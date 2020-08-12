@@ -19,7 +19,10 @@ covid %>%
   pull(state)
 
 filtered_data <- covid %>%
-  filter(state %in% c('California','Florida','Texas','New York','Georgia','Illinois'))
+  filter(state %in% c('California','Florida','Texas','New York','Georgia','Illinois')) %>%
+  group_by(state, date) %>%
+  summarize(cases = sum(cases)) %>%
+  ungroup()
 
 install.packages("ggthemes")
 library(ggthemes)
