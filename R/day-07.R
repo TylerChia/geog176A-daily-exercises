@@ -1,6 +1,6 @@
 # Name: Tyler Chia
 # Date: 8/12/2020
-# Purpose:
+# Purpose: Purpose is to become comfortable with joining data frames on a common variable and switching between long and wide
 
 library(tidyverse)
 
