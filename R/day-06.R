@@ -1,6 +1,6 @@
 # Name: Tyler Chia
 # Date: 08/11/2020
-# Purpose:
+# Purpose: Plotting the 6 states with the most cases in addition to a graph that shows the daily total cases in the USA
 
 library(tidyverse)
 
