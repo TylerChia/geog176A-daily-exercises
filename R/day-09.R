@@ -3,18 +3,18 @@ library(USAboundaries)
 library(USAboundariesData)
 library(sf)
 states <- us_states()
-newstates <- states %>%
+CONUS <- states %>%
   filter(name != "Alaska" & name != "Puerto Rico" & name != "Hawaii")
 
-newstates_ls <- newstates %>%
+CONUS_ls <- CONUS %>%
   st_combine() %>%
   st_cast("MULTILINESTRING")
-newstates_ls
-plot(newstates_ls)
+CONUS_ls
+plot(CONUS_ls)
 
-newstates_ls2 <- newstates %>%
+CONUS_ls2 <- CONUS %>%
   st_union() %>%
   st_cast("MULTILINESTRING")
-newstates_ls2
-plot(newstates_ls2)
+CONUS_ls2
+plot(CONUS_ls2)
 
