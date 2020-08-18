@@ -9,10 +9,12 @@ newstates <- states %>%
 newstates_ls <- newstates %>%
   st_combine() %>%
   st_cast("MULTILINESTRING")
+newstates_ls
 plot(newstates_ls)
 
 newstates_ls2 <- newstates %>%
   st_union() %>%
   st_cast("MULTILINESTRING")
+newstates_ls2
 plot(newstates_ls2)
 
