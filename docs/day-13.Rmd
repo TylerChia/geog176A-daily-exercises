@@ -1,0 +1,27 @@
+```{r}
+library(tidyverse)
+library(USAboundaries)
+library(USAboundariesData)
+library(sf)
+library(rmapshaper)
+states <- us_states() %>%
+  filter(name != "Alaska" & name != "Puerto Rico" & name != "Hawaii") %>% 
+  st_union() %>% 
+  st_transform(5070)
+```
+
+```{r}
+plot(states)
+mapview::npts(states)
+us2000 = st_simplify(states, dTolerance = 20000)
+plot(us2000)
+mapview::npts(us2000)
+```
+
+```{r}
+us8 = ms_simplify(states, keep = 0.08)
+plot(us8)
+mapview::npts(us8)
+```
+
+
