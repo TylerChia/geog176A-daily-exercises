@@ -24,6 +24,7 @@ missi <- read_sf("~/github/geog-176A-labs/data/majorrivers_0_0") %>%
 max_storage = NID2019_U %>% 
   filter(HAZARD == "H") %>% 
   filter(!STATE %in% c("AK", "HI", "GU", "PR")) %>% 
+  filter(PURPOSES == "C") %>% 
   group_by(STATE) %>% 
   slice_max(NID_STORAGE, n=1)
 

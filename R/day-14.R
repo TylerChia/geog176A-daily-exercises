@@ -10,7 +10,7 @@ cities = readr::read_csv("uscities.csv") %>%
 
 get_conus = function(data, var){
   filter(data, !get(var) %in%
-           c("Hawaii", "Puerto Rico", "Alaska"))
+           c("Hawaii", "Puerto Rico", "Alaska","Guam","District of Columbia"))
 }
 counties = st_transform(us_counties(), 5070) %>%
   get_conus("state_name")
@@ -40,4 +40,4 @@ point_in_polygon3(cities, counties, "geoid") %>%
   ggsave(file = "~/github/geog176A-daily-exercises/img/num_cities_per_county.png")
 
 
-
+install.packages("leaflet")
