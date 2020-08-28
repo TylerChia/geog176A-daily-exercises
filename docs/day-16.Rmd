@@ -1,0 +1,44 @@
+```{r, warning=F, message=F}
+# SPDS
+library(tidyverse)
+library(sf)
+
+# Data
+library(USAboundariesData)
+library(USAboundaries)
+library(readxl)
+
+# Visualization
+library(rmapshaper)
+library(gghighlight)
+library(knitr)
+library(leaflet)
+
+NID2019_U <- read_excel("~/github/geog-176A-labs/data/NID2019_U.xlsx") %>% 
+  filter(!is.na(LONGITUDE)) %>% 
+  filter(!is.na(LATITUDE))
+
+missi <- read_sf("~/github/geog-176A-labs/data/majorrivers_0_0") %>% 
+  filter(SYSTEM == "Mississippi")
+
+max_storage = NID2019_U %>% 
+  filter(HAZARD == "H") %>% 
+  filter(!STATE %in% c("AK", "HI", "GU", "PR")) %>% 
+  group_by(STATE) %>% 
+  slice_max(NID_STORAGE, n=1)
+
+max_storage_labels <- max_storage %>% 
+  select(DAM_NAME, NID_STORAGE, PURPOSES, YEAR_COMPLETED)
+
+radius = max_storage %>% 
+  mutate(radius = NID_STORAGE / 1500000) %>% 
+  select(radius)
+
+avector <- as.vector(radius$radius)
+
+leaflet(data = max_storage) %>% 
+  addProviderTiles(providers$CartoDB) %>% 
+  addCircleMarkers(color = "red", fillOpacity = 1, stroke = FALSE, popup = leafpop::popupTable(max_storage_labels, feature.id = FALSE), radius = avector) %>% 
+  addPolylines(data = missi)
+```
+
