@@ -1,0 +1,48 @@
+```{r, warning=F, message=F, echo=F}
+# SPDS
+library(tidyverse)
+library(sf)
+
+# Data
+library(USAboundariesData)
+library(USAboundaries)
+library(readxl)
+library(rgdal)
+
+# Visualization
+library(rmapshaper)
+library(gghighlight)
+library(knitr)
+library(leaflet)
+library(raster)
+
+uscities <- read.csv("~/github/geog176A-daily-exercises/uscities.csv") %>% 
+  st_as_sf(coords = c("lng","lat"), crs = 4326) %>% 
+  filter(city == "Goleta") %>% 
+  st_transform(5070) %>% 
+  st_buffer(5000) %>% 
+  st_bbox() %>% 
+  st_as_sfc() %>% 
+  st_as_sf()
+
+elevation = elevatr::get_elev_raster(uscities, z = 11) %>% 
+  crop(uscities)
+writeRaster(elevation, filename = "goleta-elev.tif", overwrite = T)
+
+elevation = raster("goleta-elev.tif")
+
+FUN = function(x){ ifelse(x > 0, 1, NA) }
+
+elevation1 = calc(elevation, FUN)
+
+ocean = elevation1 * elevation
+
+rcl = data.frame(min = seq(0,500,100), max = seq(100,600,100), lab = c(0:5))
+
+rc = reclassify(ocean, rcl, lowerTRUE = T)
+
+s = stack(elevation, elevation1, ocean, rc) %>% 
+  setNames(c("elevation", "land=mask", "terrain", "topography"))
+
+plot(s, col = viridis::viridis((256)))
+```
