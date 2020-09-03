@@ -1,5 +1,4 @@
 ```{r, warning=F, message=F, echo=F}
-# SPDS
 library(tidyverse)
 library(sf)
 
@@ -8,6 +7,7 @@ library(USAboundariesData)
 library(USAboundaries)
 library(readxl)
 library(rgdal)
+library(osmdata)
 
 # Visualization
 library(rmapshaper)
@@ -44,6 +44,26 @@ rc = reclassify(ocean, rcl, lowerTRUE = T)
 s = stack(elevation, elevation1, ocean, rc) %>% 
   setNames(c("elevation", "land=mask", "terrain", "topography"))
 
-plot(s, col = viridis::viridis((256)))
 
+bb = st_bbox(s) %>% 
+  st_as_sfc() %>% 
+  st_transform(4326)
+
+osm = osmdata::opq(bb) %>% 
+  add_osm_feature(key = 'amenity', value = 'restaurant') %>% 
+  osmdata_sf()
+
+restaurant = osm$osm_points %>% 
+  filter(name != 'NA')
+
+restaurant = restaurant %>% 
+  mutate(elev = raster::extract(elevation, restaurant))
+
+labels = restaurant %>% 
+  dplyr::select(elev)
+
+leaflet() %>% 
+  addProviderTiles(providers$CartoDB) %>% 
+  addMarkers(data = restaurant, popup = leafpop::popupTable(st_drop_geometry(labels), feature.id = F, row.numbers = F), label = ~name)
 ```
+
