@@ -1,0 +1,34 @@
+```{r, warning=F, message=F, echo=F}
+library(tidyverse)
+library(sf)
+library(USAboundariesData)
+library(USAboundaries)
+library(readxl)
+library(rgdal)
+library(osmdata)
+library(rmapshaper)
+library(gghighlight)
+library(knitr)
+library(leaflet)
+library(raster)
+
+remotes::install_github("mikejohnson51/climateR") 
+library(climateR)
+
+params = c("prcp", "tmax", "tmin", "swe")
+AOI = USAboundaries::us_states() %>% filter(name == "California")
+co = climateR::getTerraClim(AOI, params, startDate = "2018-01-01")  %>% 
+  stack() %>% 
+  setNames(params)
+values = values(co)
+idx = which(!is.na(values))
+v = na.omit(values)
+vs = scale(v)
+E = kmeans(vs, 5, iter.max = 100)
+clus_raster = co$tmax
+values(clus_raster) = NA
+
+clus_raster[idx] <- E$cluster
+plot(clus_raster, col = RColorBrewer::brewer.pal(5, "Spectral"))
+```
+
