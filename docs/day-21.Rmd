@@ -1,0 +1,33 @@
+```{r}
+library(tidyverse)
+library(sf)
+library(elevatr)
+library(raster)
+library(whitebox)
+mo = AOI::aoi_get("Mount Saint Helens") %>% 
+  AOI::aoi_buffer(.5)
+```
+
+```{r, eval = F}
+elev = elevatr::get_elev_raster(mo, z = 12) 
+
+writeRaster(elev, "../data/mount_st_helens_elev.tif", overwrite = T)
+
+wbt_slope("../data/mount_st_helens_elev.tif", "../data/mount_st_helens_slope.tif")
+
+wbt_aspect("../data/mount_st_helens_elev.tif", "../data/mount_st_helens_aspect.tif")
+
+wbt_hillshade("../data/mount_st_helens_elev.tif", "../data/mount_st_helens_hillshade.tif")
+```
+
+```{r, eval= T}
+a = raster("../data/mount_st_helens_elev.tif")
+b = raster("../data/mount_st_helens_slope.tif")
+c = raster("../data/mount_st_helens_aspect.tif")
+d = raster("../data/mount_st_helens_hillshade.tif")
+plot(a, box = F, axes = F, col = viridis::viridis(256), main = "Elevation")
+plot(b, box = F, axes = F, col = terrain.colors(256), main = "Slope")
+plot(c, box = F, axes = F, col = rainbow(8), main = "Aspect")
+plot(d, box = F, axes = F, col = gray.colors(256, alpha = .8), main = "Hillshade")
+```
+
