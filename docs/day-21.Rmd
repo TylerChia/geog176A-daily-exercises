@@ -3,7 +3,7 @@ library(tidyverse)
 library(sf)
 library(elevatr)
 library(raster)
-library(whitebox)
+install.packages("whitebox", repos="http://R-Forge.R-project.org")
 mo = AOI::aoi_get("Mount Saint Helens") %>% 
   AOI::aoi_buffer(.5)
 ```
